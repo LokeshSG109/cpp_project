@@ -214,3 +214,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
