@@ -5,6 +5,6 @@ django-crispy-forms
 crispy-bootstrap5
 Pillow
 whitenoise
-smartnotifier
+#smartnotifier
 wheel
 setuptools
