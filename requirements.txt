@@ -1,0 +1,10 @@
+Django
+boto3
+python-dotenv
+django-crispy-forms
+crispy-bootstrap5
+Pillow
+whitenoise
+smartnotifier
+wheel
+setuptools

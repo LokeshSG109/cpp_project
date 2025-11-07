@@ -1,0 +1,15 @@
+{% extends "appointments/base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h3>Login</h3>
+    <form method="post">{% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <hr>
+    <p>Don't have an account? <a href="{% url 'appointments:register' %}">Register</a></p>
+  </div>
+</div>
+{% endblock %}

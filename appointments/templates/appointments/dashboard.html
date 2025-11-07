@@ -1,0 +1,66 @@
+{% extends "appointments/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-10 mx-auto">
+    <h3>Welcome {% if user %}{{ user.full_name }}{% else %}Guest{% endif %}</h3>
+    <p class="text-muted">
+  Welcome to the <strong>Smart Energy Service Appointment System</strong> — 
+  a cloud-powered platform designed to simplify how users book, manage, and track 
+  service requests for electricity, gas, steam, and air conditioning systems.
+</p>
+
+    <p>You can view all your booked service appointments below.</p>
+
+    {% if appointments %}
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Appointment ID</th>
+            <th>Issue</th>
+            <th>Preferred Date/Time</th>
+            <th>Status</th>
+            <th>Update/Delete</th>
+            <th>Photos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in appointments %}
+            <tr>
+              <td>{{ a.appointment_id }}</td>
+              <td>{{ a.issue }}</td>
+              <td>{{ a.preferred_datetime }}</td>
+              <td>{{ a.status }}</td>
+              <td>
+  {% if a.status == "PENDING" %}
+    <a href="{% url 'appointments:update_appointment' a.appointment_id %}" class="btn btn-sm btn-warning me-2">Edit</a>
+    <a href="{% url 'appointments:delete_appointment' a.appointment_id %}" class="btn btn-sm btn-danger">Delete</a>
+
+  {% else %}
+    <span class="text-muted">Locked</span>
+  {% endif %}
+</td>
+              <td>
+                {% if a.s3_photos %}
+                  <div class="d-flex flex-wrap gap-2">
+                    {% for photo in a.s3_photos %}
+                      <a href="{{ photo }}" target="_blank">
+                        <img src="{{ photo }}" alt="photo" class="img-thumbnail"
+                             style="width: 100px; height: 100px; object-fit: cover;">
+                      </a>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <span class="text-muted">No photos</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No appointments found. <a href="{% url 'appointments:book' %}">Book one now.</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

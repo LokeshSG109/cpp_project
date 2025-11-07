@@ -1,0 +1,69 @@
+{% extends "appointments/base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="container">
+  <h2 class="mb-4">Admin Dashboard – All Appointments</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  {% if appointments %}
+  <table class="table table-striped table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>User Email</th>
+        <th>Issue</th>
+        <th>Preferred Date/Time</th>
+        <th>Status</th>
+        <th>Photos</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in appointments %}
+      <tr>
+        <td>{{ a.appointment_id }}</td>
+        <td>{{ a.user_email }}</td>
+        <td style="max-width: 250px;">{{ a.issue }}</td>
+        <td>{{ a.preferred_datetime }}</td>
+        <td>
+          <span class="badge bg-info">{{ a.status }}</span>
+        </td>
+        <td>
+          {% if a.s3_photos %}
+            <div class="d-flex flex-wrap gap-2">
+              {% for p in a.s3_photos %}
+                <a href="{{ p }}" target="_blank">
+                  <img src="{{ p }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                </a>
+              {% endfor %}
+            </div>
+          {% else %}
+            <span class="text-muted">No photos</span>
+          {% endif %}
+        </td>
+        <td>
+          <form method="post" action="{% url 'appointments:update_status' a.appointment_id %}" class="d-flex">
+            {% csrf_token %}
+            <select name="status" class="form-select form-select-sm me-2">
+              <option value="PENDING" {% if a.status == "PENDING" %}selected{% endif %}>Pending</option>
+              <option value="IN_PROGRESS" {% if a.status == "IN_PROGRESS" %}selected{% endif %}>In Progress</option>
+              <option value="COMPLETED" {% if a.status == "COMPLETED" %}selected{% endif %}>Completed</option>
+              <option value="CANCELLED" {% if a.status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No appointments found.</p>
+  {% endif %}
+</div>
+{% endblock %}
