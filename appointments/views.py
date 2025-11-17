@@ -9,6 +9,9 @@ from smartnotifier import SmartNotifier
 import boto3, os
 from django.contrib.auth.decorators import login_required
 
+from appointments.aws_utils import get_secret
+secret = get_secret()
+
 def hash_password(password: str):
     salt = "nci_salt_2025"
     return hashlib.sha256((password + salt).encode("utf-8")).hexdigest()
@@ -361,9 +364,19 @@ def book_view(request):
             print("✅ User confirmation email sent via SNS")
 
             # ✅ (2) Use smartnotifier library for admin alert
-            notifier = SmartNotifier.notify(sns_client, settings.SNS_ADMIN_TOPIC_ARN)
+            # notifier = SmartNotifier.notify(sns_client, settings.SNS_ADMIN_TOPIC_ARN)
+            # result = notifier.notify(appt)
+            # print("✅ Admin alert sent:", result)
+
+
+            # instantiate notifier (CORRECT)
+            notifier = SmartNotifier(sns_client, secret["SNS_ADMIN_TOPIC_ARN"])
+
+            # send dictionary 'appt' to SmartNotifier (CORRECT)
             result = notifier.notify(appt)
-            print("✅ Admin alert sent:", result)
+
+            # print("Admin notification sent:", result)
+
 
             messages.success(request, "Appointment booked successfully!")
             return redirect(reverse("appointments:dashboard"))
