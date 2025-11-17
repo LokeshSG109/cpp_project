@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required, user_passes_test
-from smartnotifier import smartnotifier
+from smartnotifier import SmartNotifier
 import boto3, os
 
 
@@ -67,7 +67,7 @@ def update_status(request, appointment_id):
 
             # ✅ Notify using SmartNotifier
             sns_client = boto3.client("sns", region_name=settings.AWS_REGION)
-            notifier = smartnotifier(sns_client, settings.SNS_ADMIN_TOPIC_ARN)
+            notifier = SmartNotifier.notify(sns_client, settings.SNS_ADMIN_TOPIC_ARN)
 
             response = aws_utils.appointments_table.get_item(Key={"appointment_id": appointment_id})
             appointment = response.get("Item")

@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.conf import settings
 from .forms import RegisterForm, LoginForm, AppointmentForm
 from . import aws_utils
-from smartnotifier import smartnotifier
+from smartnotifier import SmartNotifier
 import boto3, os
 from django.contrib.auth.decorators import login_required
 
@@ -335,7 +335,7 @@ def book_view(request):
             print("✅ User confirmation email sent via SNS")
 
             # ✅ (2) Use smartnotifier library for admin alert
-            notifier = smartnotifier.SmartNotifier(sns_client, settings.SNS_ADMIN_TOPIC_ARN)
+            notifier = SmartNotifier.notify(sns_client, settings.SNS_ADMIN_TOPIC_ARN)
             result = notifier.notify(appt)
             print("✅ Admin alert sent:", result)
 

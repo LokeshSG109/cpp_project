@@ -154,10 +154,10 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760
 DATABASES = {
     'default': {    
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': get_secret['DATABASE_HOST'],   
-        'USER': get_secret['DATABASE_USER'],    
-        'PASSWORD': get_secret['DATABASE_PASSWORD'],
-        'NAME': get_secret['DATABASE_NAME'],
-        'PORT': get_secret['DATABASE_PORT'],
+        'HOST': secret['DATABASE_HOST'],   
+        'USER': secret['DATABASE_USER'],    
+        'PASSWORD': secret['DATABASE_PASSWORD'],
+        'NAME': secret['DATABASE_NAME'],
+        'PORT': secret['DATABASE_PORT'],
     } 
 }
