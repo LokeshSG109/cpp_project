@@ -1,8 +1,3 @@
-"""
-smartnotifier.templates
-----------------------
-Provides message formatting for different priority levels.
-"""
 
 def get_message_template(priority, appointment):
     issue = appointment.get("issue", "")

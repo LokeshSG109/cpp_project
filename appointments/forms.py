@@ -2,7 +2,6 @@ from django import forms
 
 class MultiFileField(forms.FileField):
     def clean(self, data, initial=None):
-        # accept list of files instead of single file
         if not data:
             return []
         if not isinstance(data, (list, tuple)):

@@ -16,7 +16,11 @@
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav ms-auto">
         {% if user %}
-        <li class="nav-item"><a class="nav-link" href="{% url 'appointments:book' %}">Book</a></li>
+        {% if not user.is_admin and user.full_name|lower != "admin" and not request.user.is_staff %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'appointments:book' %}">Book</a>
+        </li>
+        {% endif %}
         <li class="nav-item"><a class="nav-link" href="{% url 'appointments:logout' %}">Logout</a></li>
         {% else %}
         <li class="nav-item"><a class="nav-link" href="{% url 'appointments:login' %}">Login</a></li>

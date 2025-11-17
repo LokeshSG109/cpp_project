@@ -79,14 +79,6 @@ def create_appointment(user_id: str, user_email: str, issue: str, preferred_date
     appointments_table.put_item(Item=item)
     return item
 
-# def get_appointments_for_user(user_id: str):
-#     resp = appointments_table.query(
-#         IndexName="user_id-index" if _has_gsi("user_id-index") else None,
-#         KeyConditionExpression=None
-#     )
-#     resp = appointments_table.scan(FilterExpression=boto3.dynamodb.conditions.Attr("user_id").eq(user_id))
-#     return resp.get("Items", [])
-
 def get_appointments_for_user(user_id: str):
 
     """
@@ -102,14 +94,6 @@ def get_appointments_for_user(user_id: str):
     except Exception as e:
         print(f"Error fetching appointments: {e}")
         return []
-
-# def _has_gsi(gsi_name):
-#     try:
-#         desc = appointments_table.table_status  
-#         return False
-#     except Exception:
-#         return False
-
 
 def upload_file_to_s3(file_obj, key: str, content_type: str):
     try:
