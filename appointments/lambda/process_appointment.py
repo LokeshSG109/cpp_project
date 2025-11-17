@@ -3,10 +3,14 @@ import json
 import os
 import boto3
 
-SNS_TOPIC_ARN = os.getenv("SNS_TOPIC_ARN")
+from appointments import aws_utils
+
+secret = aws_utils.get_secret()
+
+SNS_TOPIC_ARN = secret["SNS_USER_TOPIC_ARN"]
 sns = boto3.client("sns")
 dynamodb = boto3.resource("dynamodb")
-DDB_APPOINTMENTS_TABLE = os.getenv("DDB_APPOINTMENTS_TABLE", "Appointments")
+DDB_APPOINTMENTS_TABLE = secret["DDB_APPOINTMENTS_TABLE"]
 
 def lambda_handler(event, context):
     results = []

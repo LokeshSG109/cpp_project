@@ -1,3 +1,18 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "smartnotifier"
+version = "0.0.1"
+description = "A smart notification library for Python applications."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [
+    { name = "lokesh sakamuri", email = "lokeshsakamuri2025@gmail.com" }
+]
+
+dependencies = [
+    "Pillow>=10.0.0"
+]

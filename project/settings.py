@@ -79,12 +79,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -135,13 +135,29 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #AWS
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-S3_BUCKET = os.getenv("S3_BUCKET")
-DDB_USERS_TABLE = os.getenv("DDB_USERS_TABLE", "Users")
-DDB_APPOINTMENTS_TABLE = os.getenv("DDB_APPOINTMENTS_TABLE", "Appointments")
-SQS_QUEUE_URL = os.getenv("SQS_APPOINTMENTS_QUEUE_URL")
-SNS_USER_TOPIC_ARN = os.getenv("SNS_USER_TOPIC_ARN")
-SNS_ADMIN_TOPIC_ARN = os.getenv("SNS_ADMIN_TOPIC_ARN")
+SECRETS_NAME = os.getenv("SECRETS_NAME","x25103512-cpp-secrets")
+
+from appointments.aws_utils import get_secret
+secret = get_secret()
+
+S3_BUCKET = secret["S3_BUCKET"]
+DDB_USERS_TABLE = secret["DDB_USERS_TABLE"]
+DDB_APPOINTMENTS_TABLE = secret["DDB_APPOINTMENTS_TABLE"]
+SQS_QUEUE_URL = secret["SQS_APPOINTMENTS_QUEUE_URL"]
+SNS_USER_TOPIC_ARN = secret["SNS_USER_TOPIC_ARN"]
+SNS_ADMIN_TOPIC_ARN = secret["SNS_ADMIN_TOPIC_ARN"]
 
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  
+
+DATABASES = {
+    'default': {    
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': get_secret['DATABASE_HOST'],   
+        'USER': get_secret['DATABASE_USER'],    
+        'PASSWORD': get_secret['DATABASE_PASSWORD'],
+        'NAME': get_secret['DATABASE_NAME'],
+        'PORT': get_secret['DATABASE_PORT'],
+    } 
+}

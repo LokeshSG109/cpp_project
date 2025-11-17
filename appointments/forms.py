@@ -37,14 +37,29 @@ class MultiFileInput(forms.ClearableFileInput):
 class AppointmentForm(forms.Form):
     issue = forms.CharField(
         label="Describe the issue",
-        widget=forms.Textarea(attrs={"class":"form-control", "rows":3})
+        widget=forms.Textarea(attrs={
+            "class": "form-control",
+            "rows": 3,
+            "placeholder": "Describe your issue (e.g., AC not cooling, gas leak)..."
+        })
     )
-    preferred_datetime = forms.CharField(
+
+    preferred_datetime = forms.DateTimeField(
         label="Preferred date/time",
-        widget=forms.TextInput(attrs={"class":"form-control", "placeholder":"YYYY-MM-DD HH:MM"})
+        widget=forms.DateTimeInput(
+            attrs={
+                "type": "datetime-local",
+                "class": "form-control",
+            }
+        )
     )
-    photos = MultiFileField(
+
+    photos = forms.FileField(
         label="Photos (you may upload multiple)",
-        widget=MultiFileInput(attrs={"multiple": True, "class": "form-control"}),
+        widget=forms.ClearableFileInput(attrs={
+            "multiple": False,
+            "class": "form-control"
+        }),
         required=False
     )
+

@@ -66,8 +66,8 @@ def update_status(request, appointment_id):
             )
 
             # ✅ Notify using SmartNotifier
-            sns_client = boto3.client("sns", region_name=os.getenv("AWS_REGION"))
-            notifier = smartnotifier(sns_client, os.getenv("SNS_TOPIC_ARN"))
+            sns_client = boto3.client("sns", region_name=settings.AWS_REGION)
+            notifier = smartnotifier(sns_client, settings.SNS_ADMIN_TOPIC_ARN)
 
             response = aws_utils.appointments_table.get_item(Key={"appointment_id": appointment_id})
             appointment = response.get("Item")

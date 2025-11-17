@@ -1,17 +1,44 @@
-import os
+import os, json
 import boto3
 from botocore.exceptions import ClientError
 from decimal import Decimal
 import uuid
 import time
 from boto3.dynamodb.conditions import Attr
+from django.conf import settings
 
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-S3_BUCKET = os.getenv("S3_BUCKET")
-DDB_USERS_TABLE = os.getenv("DDB_USERS_TABLE", "Users")
-DDB_APPOINTMENTS_TABLE = os.getenv("DDB_APPOINTMENTS_TABLE", "Appointments")
-SQS_QUEUE_URL = os.getenv("SQS_APPOINTMENTS_QUEUE_URL")
-SNS_TOPIC_ARN = os.getenv("SNS_TOPIC_ARN")
+AWS_REGION = settings.AWS_REGION
+
+def get_secret():
+
+    secret_name = settings.SECRETS_NAME
+    region_name = AWS_REGION
+
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        raise e
+
+    secret = get_secret_value_response['SecretString']
+    secret_dict = json.loads(secret)
+
+    return secret_dict
+
+secret = get_secret()
+
+S3_BUCKET = secret["S3_BUCKET"]
+DDB_USERS_TABLE = secret["DDB_USERS_TABLE"]
+DDB_APPOINTMENTS_TABLE = secret["DDB_APPOINTMENTS_TABLE"]
+SQS_QUEUE_URL = secret["SQS_APPOINTMENTS_QUEUE_URL"]
+SNS_USER_TOPIC_ARN = secret["SNS_USER_TOPIC_ARN"]
 
 session = boto3.Session(region_name=AWS_REGION)
 s3 = session.client("s3")
@@ -115,9 +142,9 @@ def send_appointment_message_to_sqs(appointment_item: dict):
 
 
 def publish_sns_notification(subject: str, message: str, attributes: dict = None):
-    if not SNS_TOPIC_ARN:
+    if not SNS_USER_TOPIC_ARN:
         return None
-    resp = sns.publish(TopicArn=SNS_TOPIC_ARN, Subject=subject, Message=message, MessageAttributes=attributes or {})
+    resp = sns.publish(TopicArn=SNS_USER_TOPIC_ARN, Subject=subject, Message=message, MessageAttributes=attributes or {})
     return resp
 
 import hashlib
