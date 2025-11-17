@@ -1,5 +1,4 @@
-import hashlib
-import io
+import hashlib, datetime
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
@@ -292,9 +291,35 @@ def book_view(request):
 
     if request.method == "POST":
         form = AppointmentForm(request.POST, request.FILES)
+        # if form.is_valid():
+        #     data = form.cleaned_data
+        #     s3_photos = []
+
+        #     files = request.FILES.getlist("photos")
+        #     for f in files:
+        #         key = aws_utils.generate_s3_key(f.name)
+        #         aws_utils.upload_file_to_s3(f, key, f.content_type)
+        #         s3_photos.append(
+        #             f"https://{settings.S3_BUCKET}.s3.{settings.AWS_REGION}.amazonaws.com/{key}"
+        #         )
+
+        #     # Save appointment in DynamoDB
+        #     appt = aws_utils.create_appointment(
+        #         user_id=user["user_id"],
+        #         user_email=user["email"],
+        #         issue=data["issue"],
+        #         preferred_datetime=data["preferred_datetime"],
+        #         s3_photos=s3_photos,
+        #     )
+
         if form.is_valid():
             data = form.cleaned_data
             s3_photos = []
+
+            # ✅ Convert datetime object to string for DynamoDB
+            preferred_dt = data["preferred_datetime"]
+            if isinstance(preferred_dt, (datetime.datetime, datetime.date)):
+                preferred_dt = preferred_dt.strftime("%Y-%m-%d %H:%M:%S")
 
             files = request.FILES.getlist("photos")
             for f in files:
@@ -309,9 +334,10 @@ def book_view(request):
                 user_id=user["user_id"],
                 user_email=user["email"],
                 issue=data["issue"],
-                preferred_datetime=data["preferred_datetime"],
+                preferred_datetime=preferred_dt,  # 👈 Use converted string
                 s3_photos=s3_photos,
             )
+
 
             # Send to SQS for async processing
             aws_utils.send_appointment_message_to_sqs(appt)
