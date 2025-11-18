@@ -201,7 +201,7 @@ def book_view(request):
                 Subject="Appointment Confirmation",
                 Message=user_message,
             )
-            print("✅ User confirmation email sent via SNS")
+            print("User confirmation email sent via SNS")
 
 
             notifier = SmartNotifier(sns_client, secret["SNS_ADMIN_TOPIC_ARN"])
@@ -257,13 +257,17 @@ def update_appointment(request, appointment_id):
             else:
                 s3_photos = appointment.get("s3_photos", [])
 
+            preferred_dt = data["preferred_datetime"]
+            if isinstance(preferred_dt, (datetime.datetime, datetime.date)):
+                preferred_dt = preferred_dt.strftime("%Y-%m-%d %H:%M:%S")
+
             try:
                 aws_utils.appointments_table.update_item(
                     Key={"appointment_id": appointment_id},
                     UpdateExpression="SET issue=:i, preferred_datetime=:d, s3_photos=:p",
                     ExpressionAttributeValues={
                         ":i": data["issue"],
-                        ":d": data["preferred_datetime"],
+                        ":d": preferred_dt,
                         ":p": s3_photos,
                     },
                 )
