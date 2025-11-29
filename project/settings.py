@@ -79,12 +79,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -151,13 +151,13 @@ SNS_ADMIN_TOPIC_ARN = secret["SNS_ADMIN_TOPIC_ARN"]
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  
 
-# DATABASES = {
-#     'default': {    
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'HOST': secret['DATABASE_HOST'],   
-#         'USER': secret['DATABASE_USER'],    
-#         'PASSWORD': secret['DATABASE_PASSWORD'],
-#         'NAME': secret['DATABASE_NAME'],
-#         'PORT': secret['DATABASE_PORT'],
-#     } 
-# }
+DATABASES = {
+    'default': {    
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': secret['DATABASE_HOST'],   
+        'USER': secret['DATABASE_USER'],    
+        'PASSWORD': secret['DATABASE_PASSWORD'],
+        'NAME': secret['DATABASE_NAME'],
+        'PORT': secret['DATABASE_PORT'],
+    } 
+}
